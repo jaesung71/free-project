@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 게시판 처리 SQL -->
+<mapper namespace="com.forth.prac.DAO.MemberMapper">
+	<insert id="touroku" parameterType="Member">
+		insert into MEMBERINFO7(
+			MEMBERSEQ,
+   			ID,
+    		PW,
+    		NAME,
+    		AGE
+		)values(
+			MEMBER_SEQ.nextval,
+			#{id},
+			#{pw},
+			#{name},
+			#{age}
+		)
+	</insert>
+	<select id="login" parameterType="Member" resultType="Member">
+		select ID,PW,GRADE from MEMBERINFO7 where id = #{id} and pw = #{pw}
+	</select>
+
+</mapper>

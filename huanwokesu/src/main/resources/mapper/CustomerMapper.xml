@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 게시판 처리 SQL -->
+<mapper namespace="com.fifth.prac.DAO.CustomerMapper">
+	<insert id="registCustomer" parameterType="Customer">
+		insert into CUSTOMER(
+			CUSTOMERID,
+    		CUSTOMERPW,
+    		NAME,
+    		PHONE,
+    		BIRTHDATE,
+    		ADDRESS,
+    		INDATE
+		)values(
+			#{customerid},
+			#{customerpw},
+			#{name},
+			#{phone},
+			#{birthdate},
+			#{address},
+			SYSDATE
+		)
+	</insert>
+	<select id="login" parameterType="Customer" resultType="Customer">
+		select 
+			CUSTOMERID,CUSTOMERPW
+		from 
+			CUSTOMER
+		where
+			CUSTOMERID = #{customerid} and CUSTOMERPW =#{customerpw}
+	</select>
+
+</mapper>

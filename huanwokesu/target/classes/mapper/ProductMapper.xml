@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 게시판 처리 SQL -->
+<mapper namespace="com.fifth.prac.DAO.ProductMapper">
+	<insert id="registProduct" parameterType="Product">
+		insert into PRODUCT(
+			 PRODUCTSEQ,
+    		 NAME,
+    		 QUANTITY,
+    		 PRICE,
+    		 COMMENTS,
+    		 INDATE
+		)values(
+			PRODUCT_SEQ.nextval,
+			#{name},
+			#{quantity},
+			#{price},
+			#{comments},
+			SYSDATE
+		)
+	</insert>
+	<select id="productList" resultType="Product">
+		select 
+			PRODUCTSEQ,
+    		 NAME,
+    		 QUANTITY,
+    		 PRICE,
+    		 COMMENTS,
+    		 INDATE 
+		from PRODUCT order by productseq desc
+	</select>
+	<select id="productListSearch" parameterType="map" resultType="Product">
+		select 
+			PRODUCTSEQ,
+    		 NAME,
+    		 QUANTITY,
+    		 PRICE,
+    		 COMMENTS,
+    		 INDATE 
+		from 
+			PRODUCT 
+		<if test="selectType=='name'">
+			where name like '%'||#{select}||'%'
+		</if>
+		<if test="selectType=='price'">
+			<!-- where price <![CDATA[=<]]> #{select} -->
+			where   #{select} >= price
+		</if>
+		order by 
+			productseq desc
+
+	</select>
+	<update id="qutityUpdate" parameterType="map">
+		update 
+			product 
+		set 
+			quantity = #{quantity}
+		where 
+			productseq = #{productseq}
+	</update>
+	<select id="productdetail" parameterType="String" resultType="Product">
+		select 
+			 PRODUCTSEQ,
+    		 NAME,
+    		 QUANTITY,
+    		 PRICE,
+    		 COMMENTS,
+    		 INDATE 
+		from 
+			PRODUCT 
+		where
+			productseq = #{productseq}
+	</select>
+	<update id="buyProduct" parameterType="map">
+		update 
+			PRODUCT 
+		set 
+			QUANTITY = QUANTITY-#{quantity}
+		where
+			PRODUCTSEQ = #{productseq}
+	</update>
+	<select id="soldList" parameterType="String" resultType="map">
+		select p.PRODUCTSEQ PRODUCTSEQ
+			,p.name name
+			,p.price price
+			,s.quantity quantity
+			,s.indate indate
+		from 
+			sold s,product p 
+		where 
+			s.CUSTOMERID = #{customerid} 
+		and
+			 p.PRODUCTSEQ=s.PRODUCTSEQ
+		ORDER BY s.INDATE DESC
+	</select>
+	<select id="countRecord" resultType="int">
+		select 
+			count(productseq)
+		from 	
+			PRODUCT 
+	</select>
+	<select id="countRecordSearch" parameterType="map" resultType="int" >
+		
+		select 
+			count(productseq)
+		from 
+			product
+		<if test="selectType=='name'">
+			where name like '%'||#{select}||'%'
+		</if>
+		<if test="selectType=='price'">
+			<!-- where price <![CDATA[=<]]> #{select} -->
+			where   #{select} >= price
+		</if>
+
+	</select>
+	<select id="soldListRecord" parameterType="String" resultType="int">
+		select count(p.productseq)
+		from 
+			sold s,product p 
+		where 
+			s.CUSTOMERID = #{customerid} 
+		and
+			 p.PRODUCTSEQ=s.PRODUCTSEQ
+	</select>
+	<select id="soldListRecordSearch" parameterType="map" resultType="int">
+		select count(p.productseq)
+		from 
+			sold s,product p 
+		where 
+			s.CUSTOMERID = #{customerid} 
+		and
+			 p.PRODUCTSEQ=s.PRODUCTSEQ
+		<if test="selectType=='name'">
+		and 
+			p.name like '%'||#{select}||'%'
+		</if>
+		<if test="selectType=='price'">
+		and 
+			#{select} >= p.price
+		</if> 
+	</select>
+	<select id="soldListSearch" parameterType="map" resultType="map">
+		select p.PRODUCTSEQ PRODUCTSEQ
+			,p.name name
+			,p.price price
+			,s.quantity quantity
+			,s.indate indate
+		from 
+			sold s,product p 
+		where 
+			s.CUSTOMERID = #{customerid} 
+		and
+			 p.PRODUCTSEQ=s.PRODUCTSEQ
+		<if test="selectType=='name'">
+		and 
+			p.name like '%'||#{select}||'%'
+		</if>
+		<if test="selectType=='price'">
+		and 
+			#{select} >= p.price
+		</if>
+		ORDER BY s.INDATE DESC
+	</select>
+	<select id="soldListPrice" parameterType="String" resultType="map">
+		select
+			 p.price price
+			 ,s.quantity quantity
+		from 
+			sold s,product p 
+		where 
+			s.CUSTOMERID = #{customerid} 
+		and
+			 p.PRODUCTSEQ=s.PRODUCTSEQ
+		ORDER BY s.INDATE DESC
+	</select>
+	<select id="soldListSearchPrice" parameterType="map" resultType="map">
+		select p.PRODUCTSEQ PRODUCTSEQ
+			,p.name name
+			,p.price price
+			,s.quantity quantity
+			,s.indate indate
+		from 
+			sold s,product p 
+		where 
+			s.CUSTOMERID = #{customerid} 
+		and
+			 p.PRODUCTSEQ=s.PRODUCTSEQ
+		<if test="selectType=='name'">
+		and 
+			p.name like '%'||#{select}||'%'
+		</if>
+		<if test="selectType=='price'">
+		and 
+			#{select} >= p.price
+		</if>
+		ORDER BY s.INDATE DESC
+	</select>
+</mapper>

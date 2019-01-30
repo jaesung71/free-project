@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.self.board.DAO.BoardMapper">
+	<insert id="insertBoard" parameterType="Board" >
+		insert into boardself(
+			boardseqs,
+    		id,
+    		boardtitle,
+    		boardcontext,
+    		indate,
+    		hitcount
+		)values(
+			boardseqs.nextval,
+			#{id},
+			#{boardtitle},
+			#{boardcontext},
+			SYSDATE,
+			0
+		)
+	</insert>
+	<select id="roadBoard" resultType="Board">
+		select * from boardself order by boardseqs
+	</select>
+	<select id="oneSelect" parameterType="Board" resultType="Board">
+		select * from boardself where boardseqs = #{boardseqs}
+	</select>
+	<update id="updateHitcount" parameterType="Board">
+		update boardself set hitcount = hitcount+1 where boardseqs = #{boardseqs}
+	
+	</update>
+	<delete id="deleteBoard" parameterType="Board">
+		delete from boardself where boardseqs = #{boardseqs}
+	</delete>
+	
+	<update id="modify" parameterType="Board">
+		update boardself set boardtitle =#{boardtitle},boardcontext=#{boardcontext},indate = sysdate
+		where boardseqs = #{boardseqs}
+	</update>
+</mapper>

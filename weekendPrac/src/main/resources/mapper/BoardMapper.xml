@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 게시판 처리 SQL -->
+<mapper namespace="com.forth.prac.DAO.BoardMapper">
+	<insert id="writeBoard" parameterType="Board">
+		insert into BOARDINFO7(
+			BOARDSEQ,
+    		ID,
+    		BOARDTITLE,
+    		BOARDCONTENT,
+    		INDATE,
+    		BOARDGRADE
+		)values(
+			 BOARD_SEQ2.nextval,
+			 #{id},
+			 #{boardtitle},
+			 #{boardcontent},
+			 SYSDATE,
+			 #{boardGrade}
+		)
+	</insert>
+	<select id="selectBoardList" parameterType="map" resultType="Board">
+		select 
+		BOARDSEQ,
+   	 	ID,
+    	BOARDTITLE,
+    	BOARDCONTENT,
+    	INDATE,
+    	HITCOUNT,
+    	rownum,
+    	BOARDGRADE
+		from BOARDINFO7 
+		<if test="searchType=='id'">
+		where id like '%'||#{search}||'%'
+		</if>
+		<if test="searchType=='boardtitle'">
+		where boardtitle like '%'||#{search}||'%' 
+		</if>
+		<if test="searchType=='boardcontent'">
+		where boardcontent like '%'||#{search}||'%' 
+		</if>
+		order by rownum desc
+	</select>
+	<select id="selectBoardAll"  resultType="Board">
+		select 
+		BOARDSEQ,
+   	 	ID,
+    	BOARDTITLE,
+    	BOARDCONTENT,
+    	INDATE,
+    	HITCOUNT,
+    	rownum,
+    	BOARDGRADE
+		from BOARDINFO7 
+		where boardGrade = 0
+		order by rownum desc
+	</select>
+	<select id="selectGradeBoard" parameterType="int" resultType="Board">
+		<![CDATA[  
+		select 
+		BOARDSEQ,
+   	 	ID,
+    	BOARDTITLE,
+    	BOARDCONTENT,
+    	INDATE,
+    	HITCOUNT,
+    	rownum,
+    	BOARDGRADE
+		from BOARDINFO7 
+		where boardGrade <= #{boardGrade}
+		order by rownum desc
+		]]>
+	</select>
+	<update id="upHitcount" parameterType="String">
+		update BOARDINFO7 set hitcount = (hitcount+1) where boardseq = #{boardseq}
+	</update>
+	<select id="innerSelect" parameterType="String" resultType="Board">
+		select * from BOARDINFO7 where boardseq = #{boardseq}
+	</select>
+	<update id="modifyBoard" parameterType="Board">
+		update BOARDINFO7 
+		set BOARDTITLE=#{boardtitle},BOARDCONTENT=#{boardcontent},indate = sysdate
+		where boardseq = #{boardseq}
+		
+	</update>
+	<delete id="deleteBoard" parameterType="String">
+		delete from BOARDINFO7 where boardseq = #{boardseq}
+	</delete>
+	<insert id="insertComment" parameterType="Comment">
+		insert into COMMENTS7(
+			 COMMENTSEQ,
+    		 BOARDSEQ,
+    		 ID,
+    		 comments,
+    	     INDATE
+		)values(
+			COMMENT_SEQ.nextval,
+			#{boardseq},
+			#{id},
+			#{comments},
+			SYSDATE
+		)
+	</insert>
+	<insert id="insertRComment" parameterType="Comment">
+		insert into COMMENTS7(
+			 COMMENTSEQ,
+    		 BOARDSEQ,
+    		 ID,
+    		 comments,
+    	     INDATE,
+    	     PARENTSEQ
+		)values(
+			COMMENT_SEQ.nextval,
+			#{boardseq},
+			#{id},
+			#{comments},
+			SYSDATE,
+			#{parentseq}
+		)
+	</insert>
+	<select id="selectCommentList" parameterType="String" resultType="Comment">
+		select * from COMMENTS7 where boardseq = #{boardseq} order by COMMENTSEQ
+	</select> 
+	<delete id="deleteComment" parameterType="String">
+		delete from COMMENTS7 where COMMENTSEQ = #{commentseq}
+	</delete>
+	<delete id="deleterComment" parameterType="String">
+		delete from COMMENTS7 where parentseq = #{commentseq}
+	</delete>
+	<update id="modifyComment" parameterType="Comment">
+		update COMMENTS7 set comments = #{comments},INDATE=SYSDATE
+		where COMMENTSEQ = #{commentseq}
+	</update>
+	<insert id="insertboardFile" parameterType="BoardFile">
+		insert into boardfile7(
+			 BOARDFILESEQ,
+    		 BOARDSEQ,
+    		 DBNAME,
+    		 ORGNAME
+		)values(
+			BOARDFILE_SEQ.nextval,
+			(select max(BOARDSEQ) from BOARDINFO7),
+			#{dbName},
+			#{orgName}
+		)
+	</insert>
+	<select id="selectBoardFile" parameterType="String" resultType="BoardFile">
+		select * from boardfile7 where BOARDSEQ = #{boardseq}
+	</select>
+	<delete id="deleteBoardFile" parameterType="String">
+		delete from boardfile7 where BOARDSEQ = #{boardseq}
+	</delete>
+	<delete id="deleteOneBoardFile" parameterType="String">
+		delete from boardfile7 where boardfileseq = #{boardfileseq}
+	</delete>
+	<insert id="modifyInsertBF" parameterType="BoardFile">
+		insert into boardfile7(
+			 BOARDFILESEQ,
+    		 BOARDSEQ,
+    		 DBNAME,
+    		 ORGNAME
+		)values(
+			BOARDFILE_SEQ.nextval,
+			#{boardseq},
+			#{dbName},
+			#{orgName}
+		)
+	</insert>
+
+	<select id="countRecord" parameterType="map" resultType="int">
+		select count(BOARDSEQ) from BOARDINFO7
+		<if test="searchType=='id'">
+		where id like '%'||#{search}||'%'
+		</if>
+		<if test="searchType=='boardtitle'">
+		where boardtitle like '%'||#{search}||'%'
+		</if>
+		<if test="searchType=='boardcontent'">
+		where boardcontent like '%'||#{search}||'%'
+		</if>
+		order by boardseq desc
+	</select>
+	<select id="countGradeRecord" parameterType="int" resultType="int">
+		select count(BOARDSEQ) from BOARDINFO7
+		<if test="_parameter!=null">
+			<![CDATA[
+			where boardGrade <= #{_parameter}
+			]]>
+		</if>
+	</select>
+</mapper>

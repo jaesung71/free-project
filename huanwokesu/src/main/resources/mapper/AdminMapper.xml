@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 게시판 처리 SQL -->
+<mapper namespace="com.fifth.prac.DAO.AdminMapper">
+	<select id="aLogin" parameterType="Admin" resultType="Admin">
+		select 
+			ADMINID,ADMINPW
+		FROM
+			ADMIN
+		WHERE
+			ADMINID = #{adminid} 
+		AND
+			ADMINPW = #{adminpw}
+	
+	</select>
+	<select id="customerRecord" resultType="int">
+		select 
+			count(customerid)
+		from 
+			CUSTOMER
+	</select>
+	<select id="customerList" resultType="Customer">
+		select * from CUSTOMER order by indate desc
+	</select>
+	
+	<select id="customerResearchRecord" parameterType="map" resultType="int">
+		select 
+			count(CUSTOMERID)
+		FROM
+			CUSTOMER
+		<if test="selectType=='customerid'">
+		where
+			CUSTOMERID like '%'||#{select}||'%' 		
+		</if>			
+		<if test="selectType=='name'">
+		where
+			name like '%'||#{select}||'%'
+		</if>
+	</select>
+	<select id="customerResearchList" parameterType="map" resultType="Customer">
+		select 
+			*
+		from 
+			CUSTOMER
+		<if test="selectType=='customerid'">
+		where
+			CUSTOMERID like '%'||#{select}||'%'	
+		</if>
+		<if test="selectType=='name'">
+		where
+			name like '%'||#{select}||'%'
+		</if>
+		order by indate desc
+	</select>
+</mapper>

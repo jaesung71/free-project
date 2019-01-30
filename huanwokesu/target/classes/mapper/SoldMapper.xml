@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 게시판 처리 SQL -->
+<mapper namespace="com.fifth.prac.DAO.SoldMapper">
+	<insert id="inserthistory" parameterType="Sold">
+		insert into SOLD(
+			SOLDSEQ,
+			CUSTOMERID,
+			PRODUCTSEQ,
+			INDATE,
+			QUANTITY
+		)VALUES(
+			SOLD_SEQ.NEXTVAL,
+			#{customerid},
+			#{productseq},
+			SYSDATE,
+			#{quantity}
+		)
+		
+	</insert>
+</mapper>

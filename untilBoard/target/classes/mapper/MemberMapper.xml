@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 게시판 처리 SQL -->
+<mapper namespace="com.self.board.DAO.MemberMapper">
+	<insert id="insertMember" parameterType="Member">
+		insert into Members(
+			 id,
+    		 pw,
+   	 		 name,
+    		 age,
+    		 email,
+    		 phone
+		)values(
+			#{id},
+			#{pw},
+			#{name},
+			#{age},
+			#{email},
+			#{phone}		
+		)
+	</insert>
+	<select id="loginMember" parameterType="Member" resultType="Member" >
+		select id,pw from members where id = #{id} and pw = #{pw}
+	</select>
+
+</mapper>
